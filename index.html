@@ -216,6 +216,12 @@
     if (ready) return;
     sb.auth.getSession().then(function(res){
       if (res && res.data && res.data.session) { ready = true; only('formState'); wireForm(); }
+      else if (hash.indexOf('error') !== -1) {
+        // The link itself was expired or already used — Supabase returned an
+        // error in the hash. Tell them the link is dead (re-tapping won't help),
+        // NOT to "open it from your email" (which sends them into a loop).
+        showExpired();
+      }
       else if (!hash || hash.indexOf('access_token') === -1) {
         showExpired('Open this from your email',
           'Set your password by tapping the link in the email GWT Team sent you.');
